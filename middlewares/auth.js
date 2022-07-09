@@ -1,6 +1,6 @@
 const { Token, User } = require('../models')
 
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
     const token = req.headers['x-access-token']
     if (!token)
         return res.status(403).json({
@@ -9,9 +9,10 @@ function authenticate(req, res, next) {
             payload: null
         })
 
-    let fetched = Token.findOne({ value: token })
+    let fetched = await Token.findOne({ where: { value: token } })
+    console.log(fetched)
     if (fetched) {
-        req.userId = fetched.userId
+        req.userId = fetched.UserId
         next()
     }
     else

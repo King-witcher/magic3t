@@ -6,6 +6,16 @@ const bcrypt = require ('bcrypt')
 
 module.exports = class SessionController extends AbstractController {
 
+    static async sessionInfo(req, res) {
+        let user = await User.findByPk(req.userId)
+        
+        super.response(res, {
+            uid: user.id,
+            nickname: user.nickname,
+            email: user.email
+        })
+    }
+
     static async login(req, res) {
         // Testa os campos
         if (!containsFields(req.body, ['username', 'password']))
