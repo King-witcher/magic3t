@@ -13,7 +13,7 @@ module.exports = async sequelize => {
     
     User.init({
         username: {
-            type: DataTypes.STRING(16),
+            type: DataTypes.STRING(20),
             allowNull: false,
         },
         nickname: {

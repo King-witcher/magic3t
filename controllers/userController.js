@@ -19,7 +19,6 @@ module.exports = class UserController extends AbstractController {
             let collision = await User.findOne({
                 where: { 
                     [Op.or]: [
-                         { email: req.body.email },
                          { username: req.body.username },
                          { nickname: req.body.nickname }
                     ]

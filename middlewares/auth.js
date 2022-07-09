@@ -9,7 +9,7 @@ function authenticate(req, res, next) {
             payload: null
         })
 
-    let fetched = Token.findOne({ token: token })
+    let fetched = Token.findOne({ value: token })
     if (fetched) {
         req.userId = fetched.userId
         next()
