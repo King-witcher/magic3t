@@ -2,7 +2,7 @@
 
 const { Model, DataTypes } = require('sequelize')
 
-module.exports = sequelize => {
+module.exports = async sequelize => {
     class User extends Model {
         static autoSync = true
 
@@ -12,10 +12,24 @@ module.exports = sequelize => {
     }
     
     User.init({
-        username: DataTypes.STRING(16),
-        nickname: DataTypes.STRING(16),
-        email: DataTypes.STRING(320),
-        checkedEmail: DataTypes.BOOLEAN,
+        username: {
+            type: DataTypes.STRING(16),
+            allowNull: false,
+        },
+        nickname: {
+            type: DataTypes.STRING(16),
+            allowNull: true,
+            unique: true,
+        },
+        email: {
+            type: DataTypes.STRING(320),
+            allowNull: false,
+        },
+        checkedEmail: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
         passwordDigest: DataTypes.STRING(64)
     },
     {

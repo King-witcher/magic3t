@@ -5,7 +5,7 @@ module.exports = class AbstractController {
             {
                 'success': false,
                 'message': message,
-                'payload': []
+                'payload': null
             }
         );
     }

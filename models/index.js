@@ -19,7 +19,7 @@ let modelFileNames = fs.readdirSync(__dirname).filter(file => {
 
 // Inicializa cada um
 modelFileNames.forEach(file => {
-    require('./' + file)(sequelize)
+    Promise.all([require('./' + file)(sequelize)])
 })
 
 // Cria as associações e altera as tabelas de cada model
@@ -28,7 +28,7 @@ for (let model in sequelize.models) {
     if (modelClass.associate)
         modelClass.associate(sequelize.models)
     if (modelClass.autoSync)
-        modelClass.sync({ alter: true })
+        Promise.all([modelClass.sync({ alter: true })])
 }
 
 module.exports = sequelize.models;

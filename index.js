@@ -1,17 +1,20 @@
 require('dotenv').config()
-const app = require('express')()
+require('./models')
+const express = require('express')
+const morgan = require('morgan')
+
 const auth = require('./middlewares/auth')
+const router = require('./routers/indexRouter')
 const port = process.env.PORT
 
-var test = require('./models')
-console.log(test)
 
-app.get('/', auth, (req, res) => {
-    res.send('Ola mundo')
-})
+express()
+    .use(morgan('dev'))
+    .use(express.json({limit: '1500kb'}))
+    .use(express.urlencoded({ extended: false }))
+    
+    .use(router)
 
-app.post('/login', (req, res) => {
-    res.send('ok')
-})
+    .get('/', auth, (req, res) => { return res.send('Ola mundo') })
 
-app.listen(port)
+    .listen(port)
