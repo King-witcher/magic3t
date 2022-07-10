@@ -11,7 +11,7 @@ module.exports = class UserController extends AbstractController {
     static async create(req, res) {
         try {
             // Verifica os campos obrigatórios
-            let fieldTest = containsFields(req.body, [ 'username', 'password', 'email' ])
+            let fieldTest = containsFields(req.body, [ 'username', 'password', 'email', 'nickname' ])
             if (!fieldTest.success)
                 return super.responseError(res, 422, fieldTest.missingField + " is missing.")
 

@@ -10,7 +10,7 @@ module.exports = class SessionController extends AbstractController {
         let user = await User.findByPk(req.userId)
         
         super.response(res, {
-            uid: user.id,
+            userId: user.id,
             nickname: user.nickname,
             email: user.email
         })
@@ -37,6 +37,8 @@ module.exports = class SessionController extends AbstractController {
                 UserId: user.id
             })
 
+            res.cookie('accessToken', token)
+
             return super.response(res, { token: token })
         } else {
             return super.responseError(res, 401, 'login failed')
@@ -44,6 +46,9 @@ module.exports = class SessionController extends AbstractController {
     }
 
     static async logout(req, res) {
-
+        let token = await Token.findOne({ where: { value: req.cookies.accessToken } })
+        token.destroy()
+        res.clearCookie('accessToken')
+        return super.response(res, '')
     }
 }

@@ -1,7 +1,7 @@
 const { Token, User } = require('../models')
 
 async function authenticate(req, res, next) {
-    const token = req.headers['x-access-token']
+    const token = req.cookies.accessToken
     if (!token)
         return res.status(403).json({
             success: false,

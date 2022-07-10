@@ -10,8 +10,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     }
 })
 
-sequelize.authenticate().then(() => console.log("Banco de dados autenticado com sucesso."))
-
 // Separa os arquivos de model
 let modelFileNames = fs.readdirSync(__dirname).filter(file => { 
     return (file.match(/\w+Model.js$/)) 
@@ -19,16 +17,20 @@ let modelFileNames = fs.readdirSync(__dirname).filter(file => {
 
 // Inicializa cada um
 modelFileNames.forEach(file => {
-    Promise.all([require('./' + file)(sequelize)])
+    console.log('Require', file)
+    require('./' + file)(sequelize)
 })
 
 // Cria as associações e altera as tabelas de cada model
 for (let model in sequelize.models) {
+    console.log('Associate', model)
     let modelClass = sequelize.models[model]
     if (modelClass.associate)
         modelClass.associate(sequelize.models)
     if (modelClass.autoSync)
-        Promise.all([modelClass.sync({ alter: true })])
+        modelClass.sync({ alter: true })
 }
+
+console.log('Database OK')
 
 module.exports = sequelize.models;
