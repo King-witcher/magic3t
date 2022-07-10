@@ -10,17 +10,16 @@ async function authenticate(req, res, next) {
         })
 
     let fetched = await Token.findOne({ where: { value: token } })
-    console.log(fetched)
     if (fetched) {
         req.userId = fetched.UserId
         next()
     }
     else
-    return res.status(403).json({
-        success: false,
-        message: 'unauthenticated',
-        payload: null
-    })
+        return res.status(403).json({
+            success: false,
+            message: 'unauthenticated',
+            payload: null
+        })
 }
 
 module.exports = authenticate
