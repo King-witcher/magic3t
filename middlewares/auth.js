@@ -1,4 +1,4 @@
-const { Token, User } = require('../models')
+const { Token } = require('../models')
 
 async function authenticate(req, res, next) {
     const token = req.cookies.accessToken
@@ -15,11 +15,14 @@ async function authenticate(req, res, next) {
         next()
     }
     else
-        return res.status(403).json({
+        return res
+            .status(403)
+            .clearCookie('accessToken')
+            .json({
             success: false,
             message: 'unauthenticated',
             payload: null
         })
 }
 
-module.exports = authenticate
+module.exports = { authenticate }

@@ -1,30 +1,60 @@
-const matchMakingRouter = require('../routers/matchMakingRouter')
+const Match = require('../lib/match')
 const AbstractController = require('./abstractController')
 
 module.exports = class MatchMakingController extends AbstractController {
 
-    static enqueuedPlayers = []
-
-    static async postRequest(req, res) {
-
-        if (req.body.method === 'enqueue')
-            return MatchMakingController.enqueue(req, res)
-
-        return super.responseError(res, 500, 'not implemented')
-    }
+    // Jogadores que estão na fila, indexados por userId
+    static queue = {}
 
     // Entra na fila pra ver se acha alguém
-    static async enqueue(req, res) {
-        return super.responseError(res, 500, 'not implemented23')
+    static enqueue(req, res) {
+        let queue = MatchMakingController.queue
+
+        if (queue[req.userId])
+            return this.responseError(res, 304, [])
+
+        queue[req.userId] = {
+            timestamp: Date.now(),
+            mmr: 0.0,
+            ready: false,
+        }
+
+        console.log(req.userId, 'enqueued')
+        console.log('queue', queue)
+
+        return super.response(res, '')
     }
+
 
     // Sai da fila
-    static async dequeue(req, res) {
+    static dequeue(req, res) {
+        let queue = MatchMakingController.queue
 
+        if (!queue[req.userId])
+            return this.responseError(res, 304, [])
+
+        this._dequeue(req.userId)
+
+        console.log(req.userId, 'dequeued')
+        console.log('queue', queue)
+
+        return this.response(res, '')
     }
 
-    // Verifica se encontrou alguém e, se tiver encontrado, inicia a partida e retorna informações.
-    static async check(req, res) {
+    static check(req, res) {
+        let queue = MatchMakingController.queue
+        if(queue[req.userId])
+            return super.response(res, {
+                enqueued: true,
+                ...queue[req.userId],
+            })
+        else
+            return super.response(res, {
+                enqueued: false,
+            })
+    }
 
+    static _dequeue(userId) {
+        delete MatchMakingController.queue[userId]
     }
 }

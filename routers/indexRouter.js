@@ -1,8 +1,10 @@
+const matchRouter = require('./matchRouter')
 const matchMakingRouter = require('./matchMakingRouter')
 const sessionRouter = require('./sessionRouter')
 const signinRouter = require('./signinRouter')
 
 module.exports = require('express').Router()
+    .use('/match', matchRouter)
     .use('/matchmaking', matchMakingRouter)
     .use('/session', sessionRouter)
     .use('/signin', signinRouter)

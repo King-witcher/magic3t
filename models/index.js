@@ -2,13 +2,13 @@ const Sequelize = require('sequelize')
 const fs = require('fs')
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    logging: false,
-    dialectOptions: {
-        ssl: {
-            rejectUnauthorized: false,
+        logging: false,
+        dialectOptions: {
+            ssl: {
+                rejectUnauthorized: false,
+            }
         }
-    }
-})
+    })
 
 // Separa os arquivos de model
 let modelFileNames = fs.readdirSync(__dirname).filter(file => { 

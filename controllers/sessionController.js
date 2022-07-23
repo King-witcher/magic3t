@@ -18,8 +18,9 @@ module.exports = class SessionController extends AbstractController {
 
     static async login(req, res) {
         // Testa os campos
-        if (!containsFields(req.body, ['username', 'password']))
-            return super.responseError(res, 401, 'login failed')
+        let fieldTest = containsFields(req.body, ['username', 'password'])
+        if (!fieldTest.success)
+            return super.responseError(res, 422, `${fieldTest.missingField} is missing.`)
         
         // Procura pelo usuário informado
         let user = await User.findOne({
@@ -39,7 +40,10 @@ module.exports = class SessionController extends AbstractController {
 
             res.cookie('accessToken', token)
 
-            return super.response(res, { token: token })
+            return super.response(res, {
+                nickname: user.nickname,
+                token: token,
+            })
         } else {
             return super.responseError(res, 401, 'login failed')
         }
@@ -48,6 +52,13 @@ module.exports = class SessionController extends AbstractController {
     static async logout(req, res) {
         let token = await Token.findOne({ where: { value: req.cookies.accessToken } })
         token.destroy()
+        res.clearCookie('accessToken')
+        return super.response(res, '')
+    }
+
+    static async fullLogout(req, res) {
+        let token = await Token.findAll({ where: { UserId: req.userId } })
+        await Token.destroy({ where: { UserId: req.userId } })
         res.clearCookie('accessToken')
         return super.response(res, '')
     }

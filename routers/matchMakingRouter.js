@@ -1,11 +1,12 @@
-const controller = require('../controllers/matchMakingController')
-const auth = require('../middlewares/auth')
+const Controller = require('../controllers/matchMakingController')
+const { authenticate } = require('../middlewares/auth')
 
 module.exports = require('express').Router()
-    .post('/', auth, (req, res) => {
+    .post('/', authenticate, (req, res) => {
         if (req.body.method === 'enqueue')
-            return controller.enqueue(req, res)
+            return Controller.enqueue(req, res)
         else if (req.body.method === 'dequeue')
-            return controller.dequeue(req, res)
+            return Controller.dequeue(req, res)
         return res.send(404)
     })
+    .get('/', authenticate, Controller.check)

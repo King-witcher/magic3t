@@ -16,7 +16,8 @@ express()
     .use(cookieParser())
     
     .use(router)
-
-    .get('/', (req, res) => { return res.send('Ola mundo') })
+    .all('*', (req, res) => {
+        return res.status(400).send()
+    })
 
     .listen(port)

@@ -1,7 +1,9 @@
 const controller = require('../controllers/sessionController')
-const auth = require('../middlewares/auth')
+const { authenticate } = require('../middlewares/auth')
 
+// /session
 module.exports = require('express').Router()
-    .get('/', auth, controller.sessionInfo)
+    .get('/', authenticate, controller.sessionInfo)
     .post('/', controller.login)
-    .delete('/', auth, controller.logout)
+    .delete('/', authenticate, controller.logout)
+    .delete('/all', authenticate, controller.fullLogout)
