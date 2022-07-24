@@ -5,7 +5,7 @@ const CryptoJS = require('crypto-js')
 const bcrypt = require ('bcrypt')
 
 module.exports = class SessionController extends AbstractController {
-
+    
     static async sessionInfo(req, res) {
         let user = await User.findByPk(req.userId)
         
