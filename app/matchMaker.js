@@ -2,7 +2,7 @@ const matchSet = require('./matchSet')
 const queue = require('./queue')
 
 const capacity = 2
-const pollingInterval = 2000
+const pollingInterval = 7000
 
 module.exports = {
     main: async () => {

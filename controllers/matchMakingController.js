@@ -1,23 +1,25 @@
-const Match = require('../lib/match')
 const AbstractController = require('./abstractController')
 const matchSet = require('../app/matchSet')
 const queue = require('../app/queue')
 
-class MatchMakingController extends AbstractController {
+module.exports = class MatchMakingController extends AbstractController {
 
     // Entra na fila pra ver se acha alguém
     static enqueue(req, res) {
         let uid = req.userId
 
         if (queue.enqueued[uid])
-            return this.responseError(res, 304, [])
+            return super.response(res, MatchMakingController._getQueueStatus(uid))
 
+        if (matchSet.set[uid])
+            return super.responseError(res, 403, 'already in a match')
+        
         queue.enqueue(uid)
 
         console.log(uid, 'enqueued')
         console.log('queue', queue.enqueued)
 
-        return super.response(res, '')
+        return super.response(res, MatchMakingController._getQueueStatus(uid))
     }
 
     // Sai da fila
@@ -25,44 +27,46 @@ class MatchMakingController extends AbstractController {
         let uid = req.userId
 
         if (!queue.enqueued[uid])
-            return this.responseError(res, 304, [])
+            return super.response(res, MatchMakingController._getQueueStatus(uid))
 
         queue.dequeue(uid)
 
         console.log(uid, 'dequeued')
         console.log('queue', queue.enqueued)
 
-        return this.response(res, '')
+        return super.response(res, MatchMakingController._getQueueStatus(uid))
     }
 
     // Verifica o estado atual da fila
     static check(req, res) {
         let uid = req.userId
 
+        return super.response(res, MatchMakingController._getQueueStatus(uid))
+    }
+
+    static _getQueueStatus(uid) {
         // Na fila
         if(queue.enqueued[uid])
-            return super.response(res, {
+            return {
                 enqueued: true,
-                accepted: false,
+                matchStarted: false,
                 ...queue.enqueued[uid],
-            })
+            }
 
         // Aceito
         else if(queue.accepted[uid]) {
             delete queue.accepted[uid]
-            return super.response(res, {
+            return {
                 enqueued: false,
-                accepted: true,
-            })
+                matchStarted: true,
+            }
         }
 
         // Fora da fila
         else
-            return super.response(res, {
+            return {
                 enqueued: false,
-                accepted: false,
-            })
+                matchStarted: false,
+            }
     }
 }
-
-module.exports = MatchMakingController
