@@ -23,6 +23,9 @@ module.exports = {
 
         let player1 = this._pickOldest()
         let player2 = this._pickOldest()
+
+        this.accepted[player1] = true
+        this.accepted[player2] = true
         
         return { player1, player2 }
     },

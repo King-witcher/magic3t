@@ -39,14 +39,28 @@ class MatchMakingController extends AbstractController {
     static check(req, res) {
         let uid = req.userId
 
+        // Na fila
         if(queue.enqueued[uid])
             return super.response(res, {
                 enqueued: true,
+                accepted: false,
                 ...queue.enqueued[uid],
             })
+
+        // Aceito
+        else if(queue.accepted[uid]) {
+            delete queue.accepted[uid]
+            return super.response(res, {
+                enqueued: false,
+                accepted: true,
+            })
+        }
+
+        // Fora da fila
         else
             return super.response(res, {
                 enqueued: false,
+                accepted: false,
             })
     }
 }
