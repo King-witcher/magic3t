@@ -6,8 +6,8 @@ const cookieParser = require('cookie-parser')
 
 const auth = require('./middlewares/auth')
 const router = require('./routers/indexRouter')
+const matchMaker = require('./app/matchMaker')
 const port = process.env.PORT
-
 
 express()
     .use(morgan('dev'))
@@ -20,4 +20,4 @@ express()
         return res.status(400).send()
     })
 
-    .listen(port)
+    .listen(port, matchMaker.main)

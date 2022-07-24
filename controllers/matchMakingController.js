@@ -1,60 +1,54 @@
 const Match = require('../lib/match')
 const AbstractController = require('./abstractController')
+const matchSet = require('../app/matchSet')
+const queue = require('../app/queue')
 
-module.exports = class MatchMakingController extends AbstractController {
-
-    // Jogadores que estão na fila, indexados por userId
-    static queue = {}
+class MatchMakingController extends AbstractController {
 
     // Entra na fila pra ver se acha alguém
     static enqueue(req, res) {
-        let queue = MatchMakingController.queue
+        let uid = req.userId
 
-        if (queue[req.userId])
+        if (queue.enqueued[uid])
             return this.responseError(res, 304, [])
 
-        queue[req.userId] = {
-            timestamp: Date.now(),
-            mmr: 0.0,
-            ready: false,
-        }
+        queue.enqueue(uid)
 
-        console.log(req.userId, 'enqueued')
-        console.log('queue', queue)
+        console.log(uid, 'enqueued')
+        console.log('queue', queue.enqueued)
 
         return super.response(res, '')
     }
 
-
     // Sai da fila
     static dequeue(req, res) {
-        let queue = MatchMakingController.queue
+        let uid = req.userId
 
-        if (!queue[req.userId])
+        if (!queue.enqueued[uid])
             return this.responseError(res, 304, [])
 
-        this._dequeue(req.userId)
+        queue.dequeue(uid)
 
-        console.log(req.userId, 'dequeued')
-        console.log('queue', queue)
+        console.log(uid, 'dequeued')
+        console.log('queue', queue.enqueued)
 
         return this.response(res, '')
     }
 
+    // Verifica o estado atual da fila
     static check(req, res) {
-        let queue = MatchMakingController.queue
-        if(queue[req.userId])
+        let uid = req.userId
+
+        if(queue.enqueued[uid])
             return super.response(res, {
                 enqueued: true,
-                ...queue[req.userId],
+                ...queue.enqueued[uid],
             })
         else
             return super.response(res, {
                 enqueued: false,
             })
     }
-
-    static _dequeue(userId) {
-        delete MatchMakingController.queue[userId]
-    }
 }
+
+module.exports = MatchMakingController

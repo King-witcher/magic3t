@@ -1,11 +1,8 @@
 const AbstractController = require('./abstractController')
-const Match = require('../lib/match')
+const matchSet = require('../app/matchSet')
+const queue = require('../app/queue')
 
-module.exports = class MatchController extends AbstractController {
-
-    static matches = { 
-        '1': new Match(3, 1)
-    }
+class MatchController extends AbstractController {
 
     // Processa uma solicitação de escolha de número
     static async makeChoice(req, res) {
@@ -50,18 +47,6 @@ module.exports = class MatchController extends AbstractController {
         }
         else return super.responseError(res, 404, 'no match found')
     }
-
-
-
-    static createMatch(playerId1, playerId2) {
-        let matches = MatchController.matches
-        let match = new Match(playerId1, playerId2)
-        matches[playerId1] = matches[playerId2] = match
-    }
-
-    static deleteMatch(uid) {
-        let match = MatchController.matches[uid]
-        delete matches[match.playerId1]
-        delete matches[match.playerId2]
-    }
 }
+
+module.exports = MatchController
