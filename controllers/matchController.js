@@ -1,21 +1,20 @@
-const AbstractController = require('./abstractController')
 const matchSet = require('../app/matchSet')
 const queue = require('../app/queue')
 
-class MatchController extends AbstractController {
+module.exports = {
 
     // Processa uma solicitação de escolha de número
-    static async makeChoice(req, res) {
+    makeChoice(req, res) {
 
-    }
+    },
 
     // Processa uma solicitação de rendição
-    static async forfeit(req, res) {
+    async forfeit(req, res) {
 
-    }
+    },
 
     // Retorna informações da partida e do seu estado
-    static async matchInfo(req, res) {
+    async matchInfo(req, res) {
         let matches = MatchController.matches
         matches[1].setChoice(4, matches[1].player1)
         matches[1].setChoice(5, matches[1].player2)
@@ -46,7 +45,5 @@ class MatchController extends AbstractController {
             return super.response(res, payload)
         }
         else return super.responseError(res, 404, 'no match found')
-    }
+    },
 }
-
-module.exports = MatchController

@@ -1,26 +1,27 @@
-const AbstractController = require('./abstractController')
 const { User, Token } = require('../models')
 const { containsFields } = require('../helpers/functions')
 const CryptoJS = require('crypto-js')
 const bcrypt = require ('bcrypt')
 
-module.exports = class SessionController extends AbstractController {
-    
-    static async sessionInfo(req, res) {
+module.exports = {
+    async sessionInfo(req, res) {
         let user = await User.findByPk(req.userId)
         
-        super.response(res, {
+        res.send({
             userId: user.id,
             nickname: user.nickname,
             email: user.email
         })
-    }
+    },
 
-    static async login(req, res) {
+    async login(req, res) {
         // Testa os campos
         let fieldTest = containsFields(req.body, ['username', 'password'])
         if (!fieldTest.success)
-            return super.responseError(res, 422, `${fieldTest.missingField} is missing.`)
+            return res.status(422).send({
+                success: false,
+                message: `${fieldTest.missingField} is missing.`,
+            })
         
         // Procura pelo usuário informado
         let user = await User.findOne({
@@ -40,26 +41,29 @@ module.exports = class SessionController extends AbstractController {
 
             res.cookie('accessToken', token)
 
-            return super.response(res, {
+            return res.send({
+                sucess: true,
                 nickname: user.nickname,
                 token: token,
             })
         } else {
-            return super.responseError(res, 401, 'login failed')
+            return res.status(401).send({
+                success: false,
+                message: 'login failed'
+            })
         }
-    }
+    },
 
-    static async logout(req, res) {
+    async logout(req, res) {
         let token = await Token.findOne({ where: { value: req.cookies.accessToken } })
         token.destroy()
         res.clearCookie('accessToken')
-        return super.response(res, '')
-    }
+        return res.send({ success: true })
+    },
 
-    static async fullLogout(req, res) {
-        let token = await Token.findAll({ where: { UserId: req.userId } })
+    async fullLogout(req, res){
         await Token.destroy({ where: { UserId: req.userId } })
         res.clearCookie('accessToken')
-        return super.response(res, '')
-    }
+        return res.send({ sucess: true })
+    },
 }

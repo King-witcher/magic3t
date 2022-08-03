@@ -1,0 +1,3 @@
+D:\code\magic3t\obj\Debug\Magic3t.njsproj.AssemblyReference.cache
+D:\code\magic3t\obj\Debug\Magic3t.njsproj.CoreCompileInputs.cache
+D:\code\magic3t\bin\Microsoft.NodejsTools.WebRole.dll

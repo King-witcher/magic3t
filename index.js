@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 
 const auth = require('./middlewares/auth')
-const router = require('./routers/indexRouter')
+const routes = require('./routes')
 const matchMaker = require('./app/matchMaker')
 const port = process.env.PORT
 
@@ -15,7 +15,7 @@ express()
     .use(express.urlencoded({ extended: false }))
     .use(cookieParser())
     
-    .use(router)
+    .use(routes)
     .all('*', (req, res) => {
         return res.status(404).send()
     })

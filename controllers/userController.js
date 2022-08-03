@@ -1,19 +1,20 @@
 const bcrypt = require('bcrypt')
 const { Op } = require('sequelize')
+const Router = require('express').Router()
 
-const AbstractController = require('./abstractController')
 const { User } = require('../models')
 const { containsFields } = require('../helpers/functions')
 
-module.exports = class UserController extends AbstractController {
-
-    // Solicita um cadastro
-    static async create(req, res) {
+module.exports = {
+    async create(req, res) {
         try {
             // Verifica os campos obrigatórios
             let fieldTest = containsFields(req.body, [ 'username', 'password', 'email', 'nickname' ])
             if (!fieldTest.success)
-                return super.responseError(res, 422, fieldTest.missingField + " is missing.")
+                return res.status(422).send({
+                    success: false,
+                    message: `${fieldTest.missingField} is missing.`
+                })
 
             // Verifica se não há colisão de campos únicos no banco de dados
             let collision = await User.findOne({
@@ -25,7 +26,7 @@ module.exports = class UserController extends AbstractController {
                 }
             })
             if (collision)
-                return super.responseError(res, 422, '')
+                return res.status(403).send({ success: false })
 
 
             // Cria o usuário
@@ -38,15 +39,13 @@ module.exports = class UserController extends AbstractController {
 
             await User.create(body)
 
-            return super.response(res, '')
+            return res.send({ success: true })
         } catch (err) {
             console.error(err)
-            return super.responseError(res, 500, 'error on api')
+            return res.status(500).send({ 
+                success: false, 
+                message: 'error on api' 
+            })
         }
-    }
-
-    // Atualiza um cadastro
-    static async update(req, res) {
-
     }
 }

@@ -6,7 +6,6 @@ async function authenticate(req, res, next) {
         return res.status(403).json({
             success: false,
             message: 'unauthenticated',
-            payload: null
         })
 
     let fetched = await Token.findOne({ where: { value: token } })
@@ -21,7 +20,6 @@ async function authenticate(req, res, next) {
             .json({
             success: false,
             message: 'unauthenticated',
-            payload: null
         })
 }
 
